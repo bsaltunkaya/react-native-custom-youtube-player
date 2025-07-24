@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import 'react-native-reanimated';
 import CustomYouTubePlayer from './components/CustomYouTubePlayer';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -68,103 +70,120 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Özelleştirilmiş YouTube Oynatıcısı</Text>
-        <Text style={styles.headerSubtitle}>React Native • Expo Bare Workflow</Text>
-      </View>
-
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.addVideoSection}>
-          <Text style={styles.sectionTitle}>Yeni Video Ekle</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="YouTube video ID veya URL girin..."
-              value={customVideoId}
-              onChangeText={setCustomVideoId}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <TouchableOpacity style={styles.addButton} onPress={addCustomVideo}>
-              <Ionicons name="add" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.helpText}>
-            Örnek: dQw4w9WgXcQ veya https://www.youtube.com/watch?v=dQw4w9WgXcQ
-          </Text>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+        
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Özelleştirilmiş YouTube Oynatıcısı</Text>
+          <Text style={styles.headerSubtitle}>React Native • Expo Bare Workflow • SDK 53</Text>
         </View>
 
-        <View style={styles.videoSection}>
-          <Text style={styles.sectionTitle}>Video Listesi</Text>
-          {videoList.map((video, index) => (
-            <View key={index} style={styles.videoItem}>
-              <View style={styles.videoHeader}>
-                <Text style={styles.videoTitle}>{video.title}</Text>
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => removeVideo(index)}
-                >
-                  <Ionicons name="trash" size={20} color="#FF3B30" />
-                </TouchableOpacity>
-              </View>
-              
-              <CustomYouTubePlayer
-                videoId={video.id}
-                height={220}
-                autoplay={false}
-                muted={false}
-                loop={false}
-                showControls={true}
-                showTitle={false}
-                title={video.title}
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <View style={styles.addVideoSection}>
+            <Text style={styles.sectionTitle}>Yeni Video Ekle</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.textInput}
+                placeholder="YouTube video ID veya URL girin..."
+                value={customVideoId}
+                onChangeText={setCustomVideoId}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
+              <TouchableOpacity style={styles.addButton} onPress={addCustomVideo}>
+                <Ionicons name="add" size={24} color="white" />
+              </TouchableOpacity>
             </View>
-          ))}
-        </View>
+            <Text style={styles.helpText}>
+              Örnek: dQw4w9WgXcQ veya https://www.youtube.com/watch?v=dQw4w9WgXcQ
+            </Text>
+          </View>
 
-        <View style={styles.featuresSection}>
-          <Text style={styles.sectionTitle}>Özellikler</Text>
-          <View style={styles.featuresList}>
-            <View style={styles.featureItem}>
-              <Ionicons name="play-circle" size={24} color="#FF0000" />
-              <Text style={styles.featureText}>Özelleştirilmiş oynatma kontrolleri</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Ionicons name="expand" size={24} color="#FF0000" />
-              <Text style={styles.featureText}>Tam ekran desteği</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Ionicons name="volume-high" size={24} color="#FF0000" />
-              <Text style={styles.featureText}>Ses kontrolü</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Ionicons name="time" size={24} color="#FF0000" />
-              <Text style={styles.featureText}>İleri/geri sarma (+10s/-10s)</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Ionicons name="refresh" size={24} color="#FF0000" />
-              <Text style={styles.featureText}>Başa dönme özelliği</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Ionicons name="phone-portrait" size={24} color="#FF0000" />
-              <Text style={styles.featureText}>Responsive tasarım</Text>
+          <View style={styles.videoSection}>
+            <Text style={styles.sectionTitle}>Video Listesi</Text>
+            {videoList.map((video, index) => (
+              <View key={index} style={styles.videoItem}>
+                <View style={styles.videoHeader}>
+                  <Text style={styles.videoTitle}>{video.title}</Text>
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => removeVideo(index)}
+                  >
+                    <Ionicons name="trash" size={20} color="#FF3B30" />
+                  </TouchableOpacity>
+                </View>
+                
+                <CustomYouTubePlayer
+                  videoId={video.id}
+                  height={220}
+                  autoplay={false}
+                  muted={false}
+                  loop={false}
+                  showControls={true}
+                  showTitle={false}
+                  title={video.title}
+                />
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.featuresSection}>
+            <Text style={styles.sectionTitle}>Özellikler</Text>
+            <View style={styles.featuresList}>
+              <View style={styles.featureItem}>
+                <Ionicons name="play-circle" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>Özelleştirilmiş oynatma kontrolleri</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <Ionicons name="expand" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>Tam ekran desteği</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <Ionicons name="volume-high" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>Ses kontrolü</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <Ionicons name="time" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>İleri/geri sarma (+10s/-10s)</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <Ionicons name="refresh" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>Başa dönme özelliği</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <Ionicons name="phone-portrait" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>Responsive tasarım</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <Ionicons name="finger-print" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>React Native Gesture Handler desteği</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <Ionicons name="speedometer" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>React Native Reanimated animasyonları</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <Ionicons name="layers" size={24} color="#FF0000" />
+                <Text style={styles.featureText}>React Native Screens optimizasyonu</Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            React Native YouTube iframe ile geliştirilmiştir
-          </Text>
-          <Text style={styles.footerText}>
-            Expo Bare Workflow desteği
-          </Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              React Native YouTube iframe ile geliştirilmiştir
+            </Text>
+            <Text style={styles.footerText}>
+              Expo SDK 53 • Bare Workflow desteği
+            </Text>
+            <Text style={styles.footerText}>
+              RN Screens • RN Reanimated • RN Gesture Handler
+            </Text>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
