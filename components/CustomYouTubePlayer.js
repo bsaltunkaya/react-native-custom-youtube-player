@@ -37,6 +37,10 @@ const CustomYouTubePlayer = ({
     if (state === 'ended') {
       setPlaying(false);
       setCurrentTime(0);
+    } else if (state === 'playing') {
+      setPlaying(true);
+    } else if (state === 'paused') {
+      setPlaying(false);
     }
   }, []);
 
@@ -113,116 +117,49 @@ const CustomYouTubePlayer = ({
           onPlaybackQualityChange={(quality) => console.log('Quality:', quality)}
           onPlaybackRateChange={(rate) => console.log('Rate:', rate)}
           webViewStyle={{
-            opacity: 0.99, // Fix for touch issues on Android
             borderRadius: 8,
           }}
           webViewProps={{
-            renderToHardwareTextureAndroid: true, // Fix for touch issues
-            androidLayerType: Platform.OS === 'android' && Platform.Version <= 22 ? 'hardware' : 'none', // Fix for older Android versions
             allowsFullscreenVideo: true,
             mediaPlaybackRequiresUserAction: false,
             domStorageEnabled: true,
             allowsInlineMediaPlayback: true,
-            injectedJavaScript: `
-              // Improve touch handling
-              document.addEventListener('touchstart', function(e) {
-                e.stopPropagation();
-              }, { passive: true });
-              
-              document.addEventListener('touchend', function(e) {
-                e.stopPropagation();
-              }, { passive: true });
-              
-              true;
-            `,
+            javaScriptEnabled: true,
+            scrollEnabled: false,
+            bounces: false,
+            scalesPageToFit: true,
           }}
         />
-        
-        {showControls && !loading && (
-          <View style={styles.controlsOverlay}>
-            <View style={styles.topControls}>
-              {fullscreen && (
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={toggleFullscreen}
-                >
-                  <Ionicons name="contract" size={24} color="white" />
-                </TouchableOpacity>
-              )}
-            </View>
-            
-            <View style={styles.centerControls}>
-              <TouchableOpacity
-                style={styles.playButton}
-                onPress={togglePlayPause}
-              >
-                <Ionicons 
-                  name={playing ? "pause" : "play"} 
-                  size={48} 
-                  color="white" 
-                />
-              </TouchableOpacity>
-            </View>
-            
-            <View style={styles.bottomControls}>
-              <TouchableOpacity
-                style={styles.controlButton}
-                onPress={toggleMute}
-              >
-                <Ionicons 
-                  name={mute ? "volume-mute" : "volume-high"} 
-                  size={24} 
-                  color="white" 
-                />
-              </TouchableOpacity>
-              
-              <View style={styles.timeContainer}>
-                <Text style={styles.timeText}>
-                  {formatTime(currentTime)} / {formatTime(duration)}
-                </Text>
-              </View>
-              
-              {!fullscreen && (
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={toggleFullscreen}
-                >
-                  <Ionicons name="expand" size={24} color="white" />
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-        )}
       </View>
       
       {!fullscreen && (
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>
-            Özelleştirilmiş YouTube Oynatıcısı (SDK 53 uyumlu)
+            YouTube Oynatıcısı - Videoyu oynatmak için tıklayın
           </Text>
           <View style={styles.actionButtons}>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={togglePlayPause}
+            >
+              <Ionicons name={playing ? "pause" : "play"} size={20} color="#FF0000" />
+              <Text style={styles.actionText}>{playing ? 'Duraklat' : 'Oynat'}</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={toggleMute}
+            >
+              <Ionicons name={mute ? "volume-mute" : "volume-high"} size={20} color="#FF0000" />
+              <Text style={styles.actionText}>{mute ? 'Sesi Aç' : 'Sessiz'}</Text>
+            </TouchableOpacity>
+            
             <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => seekTo(0)}
             >
               <Ionicons name="refresh" size={20} color="#FF0000" />
               <Text style={styles.actionText}>Başa Dön</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={() => seekTo(currentTime + 10)}
-            >
-              <Ionicons name="play-forward" size={20} color="#FF0000" />
-              <Text style={styles.actionText}>+10s</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={() => seekTo(Math.max(0, currentTime - 10))}
-            >
-              <Ionicons name="play-back" size={20} color="#FF0000" />
-              <Text style={styles.actionText}>-10s</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -270,6 +207,8 @@ const styles = StyleSheet.create({
   playerContainer: {
     position: 'relative',
     backgroundColor: '#000',
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   loadingContainer: {
     position: 'absolute',
@@ -281,62 +220,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
     zIndex: 10,
+    borderRadius: 8,
   },
   loadingText: {
     color: 'white',
     marginTop: 10,
     fontSize: 16,
-  },
-  webView: {
-    borderRadius: 8,
-  },
-  controlsOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  topControls: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    flexDirection: 'row',
-  },
-  centerControls: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{ translateX: -24 }, { translateY: -24 }],
-  },
-  bottomControls: {
-    position: 'absolute',
-    bottom: 10,
-    left: 10,
-    right: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  controlButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  playButton: {
-    padding: 12,
-    borderRadius: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  },
-  timeContainer: {
-    flex: 1,
-    paddingHorizontal: 15,
-  },
-  timeText: {
-    color: 'white',
-    fontSize: 14,
-    textAlign: 'center',
   },
   infoContainer: {
     padding: 15,
@@ -358,6 +247,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: '#f5f5f5',
+    minWidth: 80,
+    justifyContent: 'center',
   },
   actionText: {
     marginLeft: 5,
