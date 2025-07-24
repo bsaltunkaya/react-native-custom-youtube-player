@@ -34,8 +34,7 @@
         {
           "initialOrientation": "DEFAULT"
         }
-      ],
-      "react-native-reanimated/plugin"
+      ]
     ]
   }
 } 
