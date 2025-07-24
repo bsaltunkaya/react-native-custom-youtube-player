@@ -7,6 +7,7 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { Ionicons } from '@expo/vector-icons';
@@ -32,6 +33,7 @@ const CustomYouTubePlayer = ({
   const playerRef = useRef(null);
 
   const onStateChange = useCallback((state) => {
+    console.log('YouTube Player State:', state);
     if (state === 'ended') {
       setPlaying(false);
       setCurrentTime(0);
@@ -39,6 +41,7 @@ const CustomYouTubePlayer = ({
   }, []);
 
   const onReady = useCallback(() => {
+    console.log('YouTube Player Ready');
     setLoading(false);
   }, []);
 
@@ -109,9 +112,27 @@ const CustomYouTubePlayer = ({
           onError={onError}
           onPlaybackQualityChange={(quality) => console.log('Quality:', quality)}
           onPlaybackRateChange={(rate) => console.log('Rate:', rate)}
-          webViewStyle={styles.webView}
+          webViewStyle={{
+            opacity: 0.99, // Fix for touch issues on Android
+            borderRadius: 8,
+          }}
           webViewProps={{
+            renderToHardwareTextureAndroid: true, // Fix for touch issues
+            androidLayerType: Platform.OS === 'android' && Platform.Version <= 22 ? 'hardware' : 'none', // Fix for older Android versions
+            allowsFullscreenVideo: true,
+            mediaPlaybackRequiresUserAction: false,
+            domStorageEnabled: true,
+            allowsInlineMediaPlayback: true,
             injectedJavaScript: `
+              // Improve touch handling
+              document.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+              }, { passive: true });
+              
+              document.addEventListener('touchend', function(e) {
+                e.stopPropagation();
+              }, { passive: true });
+              
               true;
             `,
           }}
@@ -177,7 +198,7 @@ const CustomYouTubePlayer = ({
       {!fullscreen && (
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>
-            Özelleştirilmiş YouTube Oynatıcısı
+            Özelleştirilmiş YouTube Oynatıcısı (SDK 53 uyumlu)
           </Text>
           <View style={styles.actionButtons}>
             <TouchableOpacity 

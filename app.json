@@ -23,7 +23,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.yourcompany.customyoutubeplayer"
+      "package": "com.yourcompany.customyoutubeplayer",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,7 +39,14 @@
           "initialOrientation": "DEFAULT"
         }
       ],
-      "react-native-reanimated/plugin"
+      "react-native-reanimated/plugin",
+      [
+        "react-native-webview",
+        {
+          "androidMinSdkVersion": 24,
+          "useFramework": "static"
+        }
+      ]
     ]
   }
 } 
